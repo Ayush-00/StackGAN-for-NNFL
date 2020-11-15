@@ -1,3 +1,7 @@
 Our implementation for StackGAN for NNFL.
 
 Training and testing on CUB dataset.
+
+
+To run (Train Stage 1 on CUB), use:
+  python main.py --cfg cfg/cub_s1.yml --gpu 0
