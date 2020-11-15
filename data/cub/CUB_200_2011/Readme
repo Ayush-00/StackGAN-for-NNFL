@@ -1,0 +1,4 @@
+Extract the CUB dataset here.
+
+The folders which should be here are attributes, images, parts.
+Files which should be here are bounding_boxes, classes, etc.... as per dataset. 
