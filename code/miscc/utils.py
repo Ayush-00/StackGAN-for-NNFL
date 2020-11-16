@@ -58,8 +58,14 @@ def compute_discriminator_loss(netD, real_imgs, fake_imgs,
         errD_fake = (errD_fake + uncond_errD_fake) / 2.
     else:
         errD = errD_real + (errD_fake + errD_wrong) * 0.5
-    return errD, errD_real.data[0], errD_wrong.data[0], errD_fake.data[0]
 
+    #print(errD)
+    #print(errD_real.data.shape)
+    #print(errD_wrong.data.shape)
+    #print(errD_fake.data.shape)
+    #return errD, errD_real.data[0], errD_wrong.data[0], errD_fake.data[0]
+    ## Below my own line
+    return errD, errD_real.data, errD_wrong.data, errD_fake.data
 
 def compute_generator_loss(netD, fake_imgs, real_labels, conditions, gpus):
     criterion = nn.BCELoss()

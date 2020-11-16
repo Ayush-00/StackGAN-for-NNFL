@@ -26,7 +26,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Train a GAN network')
     parser.add_argument('--cfg', dest='cfg_file',
                         help='optional config file',
-                        default='birds_stage1.yml', type=str)
+                        default='cfg/cub_s1.yml', type=str)
     parser.add_argument('--gpu',  dest='gpu_id', type=str, default='0')
     parser.add_argument('--data_dir', dest='data_dir', type=str, default='')
     parser.add_argument('--manualSeed', type=int, help='manual seed')
@@ -72,6 +72,7 @@ if __name__ == "__main__":
             drop_last=True, shuffle=True, num_workers=int(cfg.WORKERS))
 
         algo = GANTrainer(output_dir)
+        print('Starting training....')
         algo.train(dataloader, cfg.STAGE)
     else:
         datapath= '%s/test/val_captions.t7' % (cfg.DATA_DIR)

@@ -120,9 +120,11 @@ class GANTrainer(object):
         nz = cfg.Z_DIM
         batch_size = self.batch_size
         noise = Variable(torch.FloatTensor(batch_size, nz))
-        fixed_noise = \
-            Variable(torch.FloatTensor(batch_size, nz).normal_(0, 1),
-                     volatile=True)
+        with torch.no_grad():
+            #Variable(torch.FloatTensor(batch_size, nz).normal_(0, 1),
+                     #volatile=True)
+            fixed_noise = \
+                torch.FloatTensor(batch_size, nz).normal_(0, 1)
         real_labels = Variable(torch.FloatTensor(batch_size).fill_(1))
         fake_labels = Variable(torch.FloatTensor(batch_size).fill_(0))
         if cfg.CUDA:
@@ -154,8 +156,10 @@ class GANTrainer(object):
                     param_group['lr'] = discriminator_lr
 
             #print('dataLoader, line 156 trainer.py...........')
-            print(data_loader)
+            #print(data_loader)
+            print('Number of batches: ' + str(len(data_loader)/self.batch_size))
             for i, data in enumerate(data_loader, 0):
+                print('batch number ' + str(i))
                 ######################################################
                 # (1) Prepare training data
                 ######################################################
@@ -165,7 +169,7 @@ class GANTrainer(object):
                 if cfg.CUDA:
                     real_imgs = real_imgs.cuda()
                     txt_embedding = txt_embedding.cuda()
-
+                #print('train line 170')
                 #######################################################
                 # (2) Generate fake images
                 ######################################################
@@ -174,10 +178,14 @@ class GANTrainer(object):
                 _, fake_imgs, mu, logvar = \
                     nn.parallel.data_parallel(netG, inputs, self.gpus)
 
+                #print('Shape of fake image: ' + str(fake_imgs.shape))
+                #print('Fake images: ')
+                #print(fake_imgs)
                 ############################
                 # (3) Update D network
                 ###########################
                 netD.zero_grad()
+                #print('train line 186')
                 errD, errD_real, errD_wrong, errD_fake = \
                     compute_discriminator_loss(netD, real_imgs, fake_imgs,
                                                real_labels, fake_labels,
@@ -194,15 +202,26 @@ class GANTrainer(object):
                 errG_total = errG + kl_loss * cfg.TRAIN.COEFF.KL
                 errG_total.backward()
                 optimizerG.step()
-
+                #print('train line 203')
                 count = count + 1
                 if i % 100 == 0:
+
+                    """
                     summary_D = summary.scalar('D_loss', errD.data[0])
                     summary_D_r = summary.scalar('D_loss_real', errD_real)
                     summary_D_w = summary.scalar('D_loss_wrong', errD_wrong)
                     summary_D_f = summary.scalar('D_loss_fake', errD_fake)
                     summary_G = summary.scalar('G_loss', errG.data[0])
                     summary_KL = summary.scalar('KL_loss', kl_loss.data[0])
+                    """
+                    ## My lines
+                    summary_D = summary.scalar('D_loss', errD.data)
+                    summary_D_r = summary.scalar('D_loss_real', errD_real)
+                    summary_D_w = summary.scalar('D_loss_wrong', errD_wrong)
+                    summary_D_f = summary.scalar('D_loss_fake', errD_fake)
+                    summary_G = summary.scalar('G_loss', errG.data)
+                    summary_KL = summary.scalar('KL_loss', kl_loss.data)
+                    #### End of my lines
 
                     self.summary_writer.add_summary(summary_D, count)
                     self.summary_writer.add_summary(summary_D_r, count)

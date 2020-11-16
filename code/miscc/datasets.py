@@ -62,6 +62,7 @@ class TextDataset(data.Dataset):
 
     def load_bbox(self):
         data_dir = self.data_dir
+        print(data_dir)
         bbox_path = os.path.join(data_dir, 'bounding_boxes.txt')
         df_bounding_boxes = pd.read_csv(bbox_path,
                                         delim_whitespace=True,
