@@ -5,3 +5,6 @@ Training and testing on CUB dataset.
 
 To run (Train Stage 1 on CUB), use:
   python main.py
+  
+ To train Stage 2 on CUB, use:
+  python main.py --cfg cfg/cub_s2.yml
