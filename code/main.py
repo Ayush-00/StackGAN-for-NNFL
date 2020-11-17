@@ -72,7 +72,7 @@ if __name__ == "__main__":
             drop_last=True, shuffle=True, num_workers=int(cfg.WORKERS))
 
         algo = GANTrainer(output_dir)
-        print('Starting training....')
+        print('Starting training for stage %d....' % cfg.STAGE)
         algo.train(dataloader, cfg.STAGE)
     else:
         datapath= '%s/test/val_captions.t7' % (cfg.DATA_DIR)

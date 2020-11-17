@@ -28,8 +28,8 @@ class TextDataset(data.Dataset):
         self.data_dir = data_dir
         if data_dir.find('cub') != -1:
             self.bbox = self.load_bbox()
-            print('BBOX LOADED')
-            print(type(self.bbox))
+            #print('BBOX LOADED')
+            #print(type(self.bbox))
             #print(self.bbox.keys())
             #exit(0)
         else:
@@ -62,7 +62,7 @@ class TextDataset(data.Dataset):
 
     def load_bbox(self):
         data_dir = self.data_dir
-        print(data_dir)
+        #print(data_dir)
         bbox_path = os.path.join(data_dir, 'bounding_boxes.txt')
         df_bounding_boxes = pd.read_csv(bbox_path,
                                         delim_whitespace=True,
@@ -72,7 +72,7 @@ class TextDataset(data.Dataset):
         df_filenames = \
             pd.read_csv(filepath, delim_whitespace=True, header=None)
         filenames = df_filenames[1].tolist()
-        print('Total filenames: ', len(filenames), filenames[0])
+        #print('Total filenames: ', len(filenames), filenames[0])
         filename_bbox = {img_file[:-4]: [] for img_file in filenames}
         #filename_bbox = {img_file: [] for img_file in filenames}
         numImgs = len(filenames)
@@ -126,8 +126,8 @@ class TextDataset(data.Dataset):
 
     def load_filenames(self, data_dir):
         filepath = os.path.join(data_dir, 'filenames.pickle')
-        print(data_dir)
-        print('##########' + str(filepath))
+        #print(data_dir)
+        #print('##########' + str(filepath))
         with open(filepath, 'rb') as f:
             filenames = pickle.load(f)
         print('Load filenames from: %s (%d)' % (filepath, len(filenames)))

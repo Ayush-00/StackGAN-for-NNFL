@@ -26,7 +26,9 @@ def compute_discriminator_loss(netD, real_imgs, fake_imgs,
     batch_size = real_imgs.size(0)
     cond = conditions.detach()
     fake = fake_imgs.detach()
+    #print('real images shape = ' + str(real_imgs.shape))
     real_features = nn.parallel.data_parallel(netD, (real_imgs), gpus)
+    #print('real features shape = ' + str(real_features.shape))
     fake_features = nn.parallel.data_parallel(netD, (fake), gpus)
     # real pairs
     inputs = (real_features, cond)

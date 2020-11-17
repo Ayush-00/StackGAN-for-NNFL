@@ -23,6 +23,8 @@ from miscc.utils import compute_discriminator_loss, compute_generator_loss
 from tensorboard import summary
 from tensorboard import FileWriter
 
+#TO print images (debug)
+import matplotlib.pyplot as plt
 
 class GANTrainer(object):
     def __init__(self, output_dir):
@@ -157,13 +159,15 @@ class GANTrainer(object):
 
             #print('dataLoader, line 156 trainer.py...........')
             #print(data_loader)
-            print('Number of batches: ' + str(len(data_loader)/self.batch_size))
+            print('Number of batches: ' + str(len(data_loader)))
             for i, data in enumerate(data_loader, 0):
                 print('batch number ' + str(i))
                 ######################################################
                 # (1) Prepare training data
                 ######################################################
                 real_img_cpu, txt_embedding = data
+                #print(txt_embedding.shape)  #(Batch_size,1024)
+                #exit(0)
                 real_imgs = Variable(real_img_cpu)
                 txt_embedding = Variable(txt_embedding)
                 if cfg.CUDA:
@@ -178,9 +182,16 @@ class GANTrainer(object):
                 _, fake_imgs, mu, logvar = \
                     nn.parallel.data_parallel(netG, inputs, self.gpus)
 
-                #print('Shape of fake image: ' + str(fake_imgs.shape))
+                print('Fake images generated shape = ' + str(fake_imgs.shape))
+                #print('Shape of fake image: ' + str(fake_imgs.shape))  [Batch_size, Channels(3), N, N]
                 #print('Fake images: ')
-                #print(fake_imgs)
+                #Display one image
+                ### Check this line! How to display image?? ##############
+                #plt.imshow(fake_imgs[0].permute(1,2,0).cpu().detach().numpy())
+                #exit(0)
+
+                ################################################
+
                 ############################
                 # (3) Update D network
                 ###########################
@@ -203,6 +214,8 @@ class GANTrainer(object):
                 errG_total.backward()
                 optimizerG.step()
                 #print('train line 203')
+
+
                 count = count + 1
                 if i % 100 == 0:
 
@@ -237,16 +250,22 @@ class GANTrainer(object):
                     save_img_results(real_img_cpu, fake, epoch, self.image_dir)
                     if lr_fake is not None:
                         save_img_results(None, lr_fake, epoch, self.image_dir)
+                    del inputs
             end_t = time.time()
             print('''[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f Loss_KL: %.4f
                      Loss_real: %.4f Loss_wrong:%.4f Loss_fake %.4f
                      Total Time: %.2fsec
                   '''
                   % (epoch, self.max_epoch, i, len(data_loader),
-                     errD.data[0], errG.data[0], kl_loss.data[0],
+                     errD.data, errG.data, kl_loss.data,
                      errD_real, errD_wrong, errD_fake, (end_t - start_t)))
+            #    % (epoch, self.max_epoch, i, len(data_loader),
+            #       errD.data[0], errG.data[0], kl_loss.data[0],
+            #       errD_real, errD_wrong, errD_fake, (end_t - start_t)))
+            print('################EPOCH COMPLETED###########')
             if epoch % self.snapshot_interval == 0:
                 save_model(netG, netD, epoch, self.model_dir)
+
         #
         save_model(netG, netD, self.max_epoch, self.model_dir)
         #

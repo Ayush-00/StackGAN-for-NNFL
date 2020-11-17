@@ -94,7 +94,11 @@ class D_GET_LOGITS(nn.Module):
         if self.bcondition and c_code is not None:
             c_code = c_code.view(-1, self.ef_dim, 1, 1)
             c_code = c_code.repeat(1, 1, 4, 4)
+
+
             # state size (ngf+egf) x 4 x 4
+            #print(h_code.shape)
+            #print(c_code.shape)
             h_c_code = torch.cat((h_code, c_code), 1)
         else:
             h_c_code = h_code
