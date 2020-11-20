@@ -75,6 +75,6 @@ if __name__ == "__main__":
         print('Starting training for stage %d....' % cfg.STAGE)
         algo.train(dataloader, cfg.STAGE)
     else:
-        datapath= '%s/test/val_captions.t7' % (cfg.DATA_DIR)
+        datapath= '%s/test/char-CNN-RNN-embeddings.pickle' % (cfg.DATA_DIR)
         algo = GANTrainer(output_dir)
         algo.sample(datapath, cfg.STAGE)

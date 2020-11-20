@@ -1,0 +1,25 @@
+CONFIG_NAME: 'stageII'
+
+DATASET_NAME: 'cub'
+EMBEDDING_TYPE: 'cnn-rnn'
+GPU_ID: '0'
+Z_DIM: 100
+NET_G: '../models/netG_epoch_100.pth'
+DATA_DIR: '../data/cub/CUB_200_2011'
+WORKERS: 4
+IMSIZE: 64
+STAGE: 1
+TRAIN:
+    FLAG: False
+    BATCH_SIZE: 32
+
+GAN:
+    CONDITION_DIM: 128
+    #DF_DIM: 96
+    DF_DIM: 64
+    GF_DIM: 128
+    #GF_DIM: 192
+    #R_NUM: 2
+
+TEXT:
+    DIMENSION: 1024

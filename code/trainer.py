@@ -2,6 +2,7 @@ from __future__ import print_function
 from six.moves import range
 from PIL import Image
 
+import pickle
 import torch.backends.cudnn as cudnn
 import torch
 import torch.nn as nn
@@ -58,9 +59,10 @@ class GANTrainer(object):
         print(netD)
 
         if cfg.NET_G != '':
-            state_dict = \
-                torch.load(cfg.NET_G,
-                           map_location=lambda storage, loc: storage)
+            #state_dict = \
+                #torch.load(cfg.NET_G,
+                          # map_location=lambda storage, loc: storage)
+            state_dict = torch.load(cfg.NET_G, map_location='cuda:0')
             netG.load_state_dict(state_dict)
             print('Load from: ', cfg.NET_G)
         if cfg.NET_D != '':
@@ -159,9 +161,11 @@ class GANTrainer(object):
 
             #print('dataLoader, line 156 trainer.py...........')
             #print(data_loader)
+            num_batches = len(data_loader)
             print('Number of batches: ' + str(len(data_loader)))
             for i, data in enumerate(data_loader, 0):
-                print('batch number ' + str(i))
+
+                print('Epoch number: ' + str(epoch) + '\tBatches: ' + str(i) + '/' + str(num_batches), end='\r')
                 ######################################################
                 # (1) Prepare training data
                 ######################################################
@@ -182,7 +186,7 @@ class GANTrainer(object):
                 _, fake_imgs, mu, logvar = \
                     nn.parallel.data_parallel(netG, inputs, self.gpus)
 
-                print('Fake images generated shape = ' + str(fake_imgs.shape))
+                #print('Fake images generated shape = ' + str(fake_imgs.shape))
                 #print('Shape of fake image: ' + str(fake_imgs.shape))  [Batch_size, Channels(3), N, N]
                 #print('Fake images: ')
                 #Display one image
@@ -280,9 +284,13 @@ class GANTrainer(object):
 
         # Load text embeddings generated from the encoder
         t_file = torchfile.load(datapath)
+        #with open(datapath, 'rb') as f:
+        #    embeddings = pickle.load(f)
+        #embeddings = np.array(embeddings)
         captions_list = t_file.raw_txt
         embeddings = np.concatenate(t_file.fea_txt, axis=0)
         num_embeddings = len(captions_list)
+        #num_embeddings = len(embeddings)
         print('Successfully load sentences from: ', datapath)
         print('Total number of sentences:', num_embeddings)
         print('num_embeddings:', num_embeddings, embeddings.shape)
