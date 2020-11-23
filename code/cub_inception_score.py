@@ -12,18 +12,21 @@ from torchvision import datasets, transforms
 #import helper
 
 imgs_folder_path = '/home/ayush/Desktop/Projects/NNFL/Assignment3.2/StackGAN for NNFL/data/cub/CUB_200_2011/images/'
+num_imgs = 1000     #Number of images you want to calculate Inception score on (Randomly selected by dataloader)
+batch_size = 10      #Batch size to calculate inception score. CHange this acc. to GPU memory available
+
 transform = transforms.Compose([
     transforms.Resize((64,64)),
     transforms.ToTensor()
 ])
 
 dataset = datasets.ImageFolder(imgs_folder_path, transform=transform)
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=400)
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=num_imgs)
 
 imgs, lables = iter(dataloader).next()
 print(imgs.shape)
 print('images loaded!')
-score, _ = in_score.inception_score(imgs, batch_size=4,resize = True)
+score, _ = in_score.inception_score(imgs, batch_size=batch_size,resize = True)
 print('Final score : ' + str(score))
 
 #print(type(dataset))
