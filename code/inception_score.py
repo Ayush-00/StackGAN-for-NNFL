@@ -20,7 +20,7 @@ def inception_score(imgs, cuda=True, batch_size=32, resize=False, splits=1):
     N = len(imgs)
 
     assert batch_size > 0
-    #assert N > batch_size
+    assert N > batch_size
 
     # Set up dtype
     if cuda:
@@ -52,6 +52,8 @@ def inception_score(imgs, cuda=True, batch_size=32, resize=False, splits=1):
         batch_size_i = batch.size()[0]
 
         preds[i*batch_size:i*batch_size + batch_size_i] = get_pred(batchv)
+        ## My Line
+        del batch
 
     # Now compute the mean kl-div
     split_scores = []
